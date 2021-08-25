@@ -50,24 +50,36 @@ public class WordFrequencyAnalyzer {
     List<WordFrequency> calculateMostFrequentNWords(String text, int n) {
         List<WordFrequency> list = createList(text);
         List<WordFrequency> result = new ArrayList<>();
-        WordFrequency curr = list.get(0);
+        int curr = 0;
         
         for (int k = 0; k < n; k++) {
             for (int i = 0; i < list.size(); i++) {
-                if (curr.getFrequency() < list.get(i).getFrequency()) {
-                    curr = list.get(i);
+                if (list.get(curr).getFrequency() < list.get(i).getFrequency()) {
+                    curr = i;
                 }
             }
+            result.add(list.get(curr));
             list.remove(curr);
-            result.add(curr);
+            curr = 0;
         }
+        
+        Collections.sort(result, new Comparator<WordFrequency>() {
+            @Override
+            public int compare(final WordFrequency object1, final WordFrequency object2) {
+                return object1.getWord().compareTo(object2.getWord());
+            }
+        });
+        
+        result.sort(Comparator.comparingInt(WordFrequency::getFrequency)
+            .reversed());
+        
         return result;
     }
     
     public static void main(String[] args) {
       WordFrequencyAnalyzer analyzer = new WordFrequencyAnalyzer();
       
-      List<WordFrequency> list = analyzer.calculateMostFrequentNWords("Hello Thomas thomas is very very very nice", 5);
+      List<WordFrequency> list = analyzer.calculateMostFrequentNWords("I Test test test working working alot alot", 3);
       
       for (WordFrequency w : list) {
           System.out.println(w);
